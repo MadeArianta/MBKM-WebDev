@@ -1,29 +1,34 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using MBKM_WebDev.Models;
+using MBKM_WebDev.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace MBKM_WebDev.Pages
 {
     public class UsersModel : PageModel
     {
-        public List<Users> ListUsers { get; private set; }
+        public IList<Users> ListUsers { get; private set; }
 
-        public void OnGet()
+        private readonly AppDbContext _context;
+
+        public UsersModel(AppDbContext context)
+        {
+            _context = context;
+        }
+
+        public async Task OnGetAsync()
         {
             // Data user statis
-            ListUsers = new List<Users>
-            {
-                new Users { Id = 1, Name = "John Doe", Email = "john.doe@example.com", Role = "Administrator" },
-                new Users { Id = 2, Name = "Jane Smith", Email = "jane.smith@example.com", Role = "User" },
-                new Users { Id = 3, Name = "Michael Brown", Email = "michael.brown@example.com", Role = "Moderator" }
-            };
-        }
-    }
+            //ListUsers = new List<Users>
+            //{
+            //    new Users { Id = 1, Name = "John Doe", Email = "john.doe@example.com", Role = "Administrator" },
+            //    new Users { Id = 2, Name = "Jane Smith", Email = "jane.smith@example.com", Role = "User" },
+            //    new Users { Id = 3, Name = "Michael Brown", Email = "michael.brown@example.com", Role = "Moderator" }
+            //};
 
-    public class Users
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Email { get; set; }
-        public string Role { get; set; }
+            //ListUsers = await _context.Users.ToListAsync();
+            ListUsers = await _context.Users.FromSqlRaw("SELECT * FROM Users").ToListAsync();
+        }
     }
 }
